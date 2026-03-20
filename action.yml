@@ -30,6 +30,43 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Detect platform
+      id: platform
+      shell: bash
+      run: |
+        OS=$(uname -s)
+        ARCH=$(uname -m)
+        case "$OS-$ARCH" in
+          Linux-x86_64)  TRIPLE="x86_64-unknown-linux-musl" ;;
+          Darwin-x86_64) TRIPLE="x86_64-apple-darwin" ;;
+          Darwin-arm64)  TRIPLE="aarch64-apple-darwin" ;;
+          *) echo "Unsupported platform: $OS-$ARCH"; exit 1 ;;
+        esac
+        echo "triple=$TRIPLE" >> "$GITHUB_OUTPUT"
+
+    - name: Download binary
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+      run: |
+        VERSION="${{ inputs.version }}"
+        TRIPLE="${{ steps.platform.outputs.triple }}"
+        DEST="$RUNNER_TEMP/ghreposync"
+
+        ARGS=(
+          release download
+          --repo innobead/ghreposync
+          --pattern "ghreposync-${TRIPLE}"
+          --output "$DEST"
+          --clobber
+        )
+        if [ "$VERSION" != "latest" ]; then
+          ARGS+=("$VERSION")
+        fi
+
+        gh "${ARGS[@]}"
+        chmod +x "$DEST"
+
     - name: Run ghreposync
       shell: bash
       env:
@@ -44,4 +81,4 @@ runs:
         if [ "${{ inputs.dry-run }}" = "true" ]; then
           ARGS+=(--dry-run)
         fi
-        just run "${ARGS[@]}"
+        "$RUNNER_TEMP/ghreposync" "${ARGS[@]}"

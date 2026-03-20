@@ -84,7 +84,7 @@ Resources are matched by name / title (case-insensitive). Deletion is never perf
 
 ## GitHub Action
 
-This repo is also a reusable GitHub Action. Reference it with `uses: innobead/ghreposync@v1` in any workflow.
+This repo is also a reusable GitHub Action. Reference it with `uses: innobead/ghreposync@v0.1.0` in any workflow.
 
 ### Inputs
 
@@ -120,7 +120,7 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: innobead/ghreposync@v1
+      - uses: innobead/ghreposync@v0.1.0
         with:
           source: org/template-repo
           target: org/my-repo
@@ -147,7 +147,7 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: innobead/ghreposync@v1
+      - uses: innobead/ghreposync@v0.1.0
         with:
           source: org/template-repo
           target: org/my-repo
@@ -169,7 +169,7 @@ jobs:
           - org/repo-b
           - org/repo-c
     steps:
-      - uses: innobead/ghreposync@v1
+      - uses: innobead/ghreposync@v0.1.0
         with:
           source: org/template-repo
           target: ${{ matrix.target }}
@@ -183,7 +183,7 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: innobead/ghreposync@v1
+      - uses: innobead/ghreposync@v0.1.0
         with:
           source: org-a/template-repo
           target: org-b/my-repo
