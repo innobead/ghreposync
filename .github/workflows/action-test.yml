@@ -1,0 +1,41 @@
+name: Action test
+
+on:
+  release:
+    types: [ published ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: ghreposync version to test (e.g. v0.1.0), or 'latest'
+        required: false
+        default: latest
+
+jobs:
+  smoke-test:
+    name: Smoke test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: extractions/setup-just@v2
+
+      - name: Sync labels (dry run)
+        uses: ./
+        with:
+          source: innobead/ghreposync
+          target: innobead/ghreposync
+          resource: labels,milestones
+          dry-run: 'true'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: ${{ inputs.version || 'latest' }}

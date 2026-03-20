@@ -1,0 +1,28 @@
+[package]
+name = "ghreposync"
+version = "0.1.0"
+edition = "2024"
+description = "Sync GitHub repository resources between repos"
+license = "MIT"
+authors = ["David Ko <innobead@gmail.com>"]
+
+[[bin]]
+name = "ghreposync"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
+
+[dependencies]
+clap = { version = "4", features = ["derive", "env"] }
+tokio = { version = "1.50.0", features = ["full"] }
+anyhow = "1"
+reqwest = { version = "0.13.2", features = ["json"] }
+serde = { version = "1", features = ["derive"] }
+async-trait = "0.1"
+colored = "3.1.1"
+urlencoding = "2"

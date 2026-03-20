@@ -1,0 +1,47 @@
+name: ghreposync
+description: Sync GitHub repository resources between repos
+author: innobead
+
+inputs:
+  source:
+    description: Source repository in owner/repo format
+    required: true
+  target:
+    description: Target repository in owner/repo format
+    required: true
+  resource:
+    description: >
+      Comma-separated list of resources to sync, or 'all'.
+      Supported values: all, labels
+    required: false
+    default: all
+  dry-run:
+    description: Preview changes without applying them
+    required: false
+    default: 'false'
+  token:
+    description: GitHub token with access to both source and target repos
+    required: true
+  version:
+    description: ghreposync release version to download (e.g. v0.1.0), or 'latest'
+    required: false
+    default: latest
+
+runs:
+  using: composite
+  steps:
+    - name: Run ghreposync
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+      run: |
+        ARGS=(
+          sync
+          --source "${{ inputs.source }}"
+          --target "${{ inputs.target }}"
+          --resource "${{ inputs.resource }}"
+        )
+        if [ "${{ inputs.dry-run }}" = "true" ]; then
+          ARGS+=(--dry-run)
+        fi
+        just run "${ARGS[@]}"
