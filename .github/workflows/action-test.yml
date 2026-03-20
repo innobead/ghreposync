@@ -10,6 +10,9 @@ on:
         required: false
         default: latest
 
+permissions:
+  issues: write
+
 jobs:
   smoke-test:
     name: Smoke test (${{ matrix.os }})
